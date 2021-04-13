@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Klientai</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="main.css">	
+	
+	<style>
+		label, input { display:block; }
+	    input.text { margin-bottom:12px; width:95%; padding: .4em; }
+	    fieldset { padding:0; border:0; margin-top:25px; }
+	    h1 { font-size: 1.2em; margin: .6em 0; }
+	    div#users-contain { width: 350px; margin: 20px 0; }
+	    div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+	    div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+	    .ui-dialog .ui-state-error { padding: .3em; }
+	    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+	</style>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  	<script>
+  		function addKlientas() {
+  		
+  			// alert( "Pridėti?" );
+  			$( '#kliento-forma' ).submit();
+  			
+  		}
+  	
+  		$( document ).ready ( function() {
+  		
+		    dialog = $( "#dialog-form" ).dialog({
+		      autoOpen: false,
+		      height: 400,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+		        "Saugoti": addKlientas,
+		        Cancel: function() {
+		          dialog.dialog( "close" );
+		        }
+		      },
+		      close: function() {
+		       //  form[ 0 ].reset();
+		        // allFields.removeClass( "ui-state-error" );
+		      }
+		    }); 
+		    
+/*
+		     	dialog =  $( "#dialog-confirm" ).dialog({
+		     		resizable: false,
+		     		height: "auto",
+		     		width: 400,
+		     		modal: true,
+		     		buttons: {
+		     			"Delete all items": function() {
+		     				 $( this ).dialog("close");
+		     				}
+		     			}
+		     		});
+		     	} ); 
+*/		    
+		    $( "#new_klientas" ).button().on ( "click", function() {
+		    
+		      alert ( 'atidarom dialogo langą' );
+		      
+		      dialog.dialog( "open" );
+		    });
+
+		    /*
+		     $( ".delete" ).each ( function() ) {
+		     
+		      $( this ).click ( function() {
+		      
+		      	miestai_id =  $( this ).data ( 'delete_id');
+		      	
+		      	 $.ajax({
+		      	 	method: 'Get'
+		      	 		, url: '/salinti-miestai'
+		      	 		, data: {
+		      	 			id miestai_id
+		      	 	}
+		      	 }).done( function( data ) {
+		      	 	if ( data != null ) {
+		      	 	 $( '#id' ).val ( data.id );
+		      	 	 dialog.dialog(open);
+		      	 	 location.reload();
+		      	 	}
+		      	 	console.log ( JSON.stringify ( data ) );
+		      	 });
+		      	
+		      });
+		    
+		  });
+		  */
+ }); 
+ 
+  	</script>	
+</head>
+<body>
+	<h3>Klientai</h3>
+	
+	<table>
+		<tr th:each="klientas : ${klientai}">
+			<td th:text="${klientas.getPav()}"></td>
+			<td th:text="${klientas.getFlag_fizinis()}"></td>
+			<td><a th:href="@{/saskaitos(kid=${klientas.getId()})}">sąskaitos</a></td>
+			<td><input type="button" class="delete" th:attr="data-el_id=${klientas.getId()}" value="&#10006"></td>				
+		</tr>
+	</table>
+	
+	<input type="button" id="new_klientas" value="Naujas klientas">
+	<div id="dialog-form" title="Klientas">
+  		<p class="validateTips">All form fields are required.</p>	
+		<form id="kliento-forma" method="POST" action="">
+			<fieldset>
+				<label for="pavadinimas">Pavadinimas</label>
+				<input name="pav" id="pav" type="text">
+				<label for="flag_fizinis">fizinis</label>
+				<input name="flag_fizinis" id="flag_fizinis" type="checkbox" value="1">
+				<input type="hidden" name="saugoti" class="frm_button" value="saugoti">	
+				<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">	
+			</fieldset>
+		</form>
+	</div>	
+	<div>
+	    <nav>
+		<a th:each="menu_item : ${lst_menu}" th:href="${menu_item.itemurl()}" th:text="${menu_item}"></a>
+	    </nav>
+	</div>	
+</body>
+</html>

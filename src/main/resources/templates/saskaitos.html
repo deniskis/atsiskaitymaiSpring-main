@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Klientai</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="main.css">	
+	
+	<style>
+		label, input { display:block; }
+	    input.text { margin-bottom:12px; width:95%; padding: .4em; }
+	    fieldset { padding:0; border:0; margin-top:25px; }
+	    h1 { font-size: 1.2em; margin: .6em 0; }
+	    div#users-contain { width: 350px; margin: 20px 0; }
+	    div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+	    div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+	    .ui-dialog .ui-state-error { padding: .3em; }
+	    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+	</style>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  	<script>
+  		function addSaskaita() {
+  		
+  			// alert( "Pridėti?" );
+  			$( '#saskaitos-forma' ).submit();
+  			
+  		}
+ 	
+  		function addApmokejimas() {
+  		
+  			alert( "Pridėti?" );
+  			$( '#apmokejimo-forma' ).submit();
+  			
+  		}  	
+  		
+  	
+  		$( document ).ready ( function() {
+  		
+		    dialog = $( "#dialog-form" ).dialog({
+		      autoOpen: false,
+		      height: 400,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+		        "Saugoti": addSaskaita,
+		        Cancel: function() {
+		          dialog.dialog( "close" );
+		        }
+		      },
+		      close: function() {
+		      }
+		    }); 
+ 
+ 			dialog_pay = $( "#dialog-form-apmoketi" ).dialog({
+		      autoOpen: false,
+		      height: 400,
+		      width: 350,
+		      modal: true,
+		      buttons: {
+		        "saugoti": addApmokejimas,
+		        Cancel: function() {
+		          dialog_pay.dialog( "close" );
+		        }
+		      },
+		      close: function() {
+		      }
+		    });			 
+		    
+		    $( ".pay" ).each ( function() {
+
+		    	$( this ).click ( function() {
+
+		    		saskaitos_id = $( this ).data ( 'el_id' );
+
+					$( '#saskaitos_id').val ( saskaitos_id );
+		      		dialog_pay.dialog( "open" );							
+
+				});		    		
+		    });	
+
+		       
+		    $( "#new_saskaita" ).button().on ( "click", function() {
+		    
+		      alert ( 'atidarom dialogo langą' );
+		      
+		      dialog.dialog( "open" );
+		    });
+
+		   
+ }); 
+ 
+  	</script>	
+</head>
+<body>
+	<h3>Klientai</h3>
+	
+	<table>
+		<tr th:each="saskaita : ${saskaitos}">
+			<td th:text="${saskaita.getData()}"></td>
+			<td th:text="${saskaita.getSuma()}"></td>
+			<td>
+				<table>
+				<tr th:each="apmokejimas : ${saskaita.getApmokejimai()}">
+					<td th:text="${apmokejimas.getData()}"></td>
+					<td th:text="${apmokejimas.getSuma()}"></td>
+				</tr>
+				</table>
+			</td>			
+			<td><input type="button" class="pay" th:attr="data-el_id=${saskaita.getId()}" value="apmokėti"></td>			
+			<td><input type="button" class="delete" th:attr="data-el_id=${saskaita.getId()}" value="&#10006"></td>				
+		</tr>
+	</table>
+	
+	<input type="button" id="new_saskaita" value="Naujas sąskaita">
+	<div id="dialog-form" title="Saskaita">
+  		<p class="validateTips">All form fields are required.</p>	
+		<form id="saskaitos-forma" method="POST" action="">
+			<fieldset>
+				<label for="data">Data</label>
+				<input name="data" id="data" type="text">
+				<label for="suma">Suma</label>
+				<input name="suma" id="suma" value="">
+				<input type="hidden" name="saugoti" class="frm_button" value="0">	
+				<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">	
+			</fieldset>
+		</form>
+	</div>	
+	<div id="dialog-form-apmoketi" title="Apmokėjimas">
+	  	<p class="validateTips">All form fields are required.</p>	
+		<form id="apmokejimo-forma" method="POST" action="">
+			<fieldset>
+				<label for="data">Data</label>
+				<input name="data" id="data" type="text">
+				<label for="suma">suma</label>
+				<input name="suma" id="suma" value="">
+				<input type="hidden" name="pay" class="frm_button" value="apmoketi">
+				<input type="hidden" name="saskaitos_id" id="saskaitos_id" class="frm_button" value="0">					
+				<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">	
+			</fieldset>
+		</form>
+	</div>
+	<div>
+	    <nav>
+		<a th:each="menu_item : ${lst_menu}" th:href="${menu_item.itemurl()}" th:text="${menu_item}"></a>
+	    </nav>
+	</div>			
+</body>
+</html>

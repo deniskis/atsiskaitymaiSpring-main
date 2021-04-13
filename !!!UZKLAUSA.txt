@@ -1,0 +1,20 @@
+SELECT 
+ `klientai`.*
+, COUNT(`klientai`.`id`) AS `kiek_saskaitu`
+, IFNULL( SUM(DISTINCT `saskaitos`.`suma`),0) AS `Saskaitu_suma`
+, SUM(IFNULL(`apmokejimai`.`suma`,0)) AS `Apmoketa_suma`
+, IFNULL(SUM(DISTINCT `saskaitos`.`suma`),0)- IFNULL(SUM(DISTINCT `apmokejimai`.`suma`),0) AS `Neapmoketas_likutis` 
+FROM 
+	`klientai` 
+LEFT JOIN `saskaitos` ON ( 
+    	`klientai`.`id`=`saskaitos`.`klientai_id`
+    )
+LEFT JOIN `apmokejimai` ON (
+    	`apmokejimai`.`saskaitos_id`=`saskaitos`.`id`
+   )
+WHERE 1
+ 
+GROUP BY `klientai`.`id`
+HAVING
+`Saskaitu_suma`> IF(`klientai`.`flag_fizinis`,300.0,1000.0)
+;
